@@ -21,13 +21,21 @@
 
 Linux 未设置 `CODEX_HOME` 时默认读取 `~/.codex/auth.json`。其他系统请将 `CODEX_HOME` 设置为包含 `auth.json` 的目录。
 
+安装到当前用户的应用菜单：
+
+```bash
+./install.sh
+```
+
+安装后可以在系统应用菜单中搜索 `Rate Limit Credits`。
+
 ## Requirements
 
 - Python 3
 - GTK 3
 - PyGObject
 
-也可以在桌面环境中启动 `RateLimitCredits.desktop`。
+仓库中的 `RateLimitCredits.desktop` 适合通过 `gio launch` 启动；文件管理器可能会把它当作文本文件打开。
 
 > 注意：`.desktop` 文件不是 Shell 脚本，不要选择“右键 → 作为程序运行”。如果文件管理器没有识别它，请先允许启动，或运行：
 
