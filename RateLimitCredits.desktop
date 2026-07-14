@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Rate Limit Credits
+Comment=查询本机 Codex rate-limit reset credits
+TryExec=python3
+Exec=sh -c "exec \"\\$(dirname \"\\$1\")/run.sh\"" sh %k
+Terminal=false
+Categories=Utility;
+Keywords=Codex;credits;rate limit;
+StartupNotify=true
