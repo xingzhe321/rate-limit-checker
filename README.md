@@ -28,3 +28,15 @@ Linux 未设置 `CODEX_HOME` 时默认读取 `~/.codex/auth.json`。其他系统
 - PyGObject
 
 也可以在桌面环境中启动 `RateLimitCredits.desktop`。
+
+> 注意：`.desktop` 文件不是 Shell 脚本，不要选择“右键 → 作为程序运行”。如果文件管理器没有识别它，请先允许启动，或运行：
+
+```bash
+gio launch ./RateLimitCredits.desktop
+```
+
+需要在终端中直接启动时，使用：
+
+```bash
+./run.sh
+```
