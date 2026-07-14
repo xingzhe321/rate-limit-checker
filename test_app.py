@@ -36,7 +36,7 @@ class AppTests(unittest.TestCase):
                 app.query()
 
     def test_gnome_proxy_is_used_without_environment_proxy(self):
-        proxy = {"http": "http://127.0.0.1:7897", "https": "http://127.0.0.1:7897"}
+        proxy = {"http": "http://proxy.test:8080", "https": "http://proxy.test:8080"}
         with patch.object(app.urllib.request, "getproxies", return_value={}), patch.object(
             app, "gnome_proxy_config", return_value=proxy
         ):
