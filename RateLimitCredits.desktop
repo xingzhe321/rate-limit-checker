@@ -3,7 +3,7 @@ Type=Application
 Name=Rate Limit Credits
 Comment=查询本机 Codex rate-limit reset credits
 TryExec=python3
-Exec=sh -c "exec \"\\$(dirname \"\\$1\")/run.sh\"" sh %k
+Exec=python3 -c "import os,sys; d=os.path.dirname(sys.argv[1]); p=os.path.join(d,'run.sh'); os.execv(p,[p])" %k
 Terminal=false
 Categories=Utility;
 Keywords=Codex;credits;rate limit;
