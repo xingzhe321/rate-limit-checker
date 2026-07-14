@@ -35,6 +35,8 @@ Linux 未设置 `CODEX_HOME` 时默认读取 `~/.codex/auth.json`。其他系统
 - GTK 3
 - PyGObject
 
+应用会优先使用 `HTTP_PROXY`、`HTTPS_PROXY` 等环境变量；Linux GNOME 应用菜单启动时，如果没有继承这些变量，会自动读取 GNOME 的手动 HTTP/HTTPS 代理设置。
+
 仓库中的 `RateLimitCredits.desktop` 适合通过 `gio launch` 启动；文件管理器可能会把它当作文本文件打开。
 
 > 注意：`.desktop` 文件不是 Shell 脚本，不要选择“右键 → 作为程序运行”。如果文件管理器没有识别它，请先允许启动，或运行：

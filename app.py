@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+import ast
 import json
 import os
 import sys
+import subprocess
 import threading
 import urllib.error
 import urllib.request
@@ -72,6 +74,83 @@ def first(card, names):
     return next((card[name] for name in names if card.get(name) is not None), None)
 
 
+def _gnome_setting(schema, key):
+    """Read one GNOME setting without making it a runtime dependency."""
+    try:
+        result = subprocess.run(
+            ["gsettings", "get", schema, key],
+            capture_output=True,
+            text=True,
+            timeout=2,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if result.returncode != 0:
+        return None
+    value = result.stdout.strip()
+    if not value:
+        return None
+    try:
+        return ast.literal_eval(value)
+    except (SyntaxError, ValueError):
+        return value
+
+
+def _proxy_endpoint(host, port):
+    if not isinstance(host, str) or not host.strip():
+        return None
+    try:
+        port = int(str(port).rsplit(" ", 1)[-1])
+    except (TypeError, ValueError):
+        return None
+    if not 1 <= port <= 65535:
+        return None
+    host = host.strip()
+    if ":" in host and not host.startswith("["):
+        host = f"[{host}]"
+    return f"http://{host}:{port}"
+
+
+def gnome_proxy_config():
+    """Return usable HTTP proxies from GNOME's manual proxy settings."""
+    if not sys.platform.startswith("linux"):
+        return {}
+    if _gnome_setting("org.gnome.system.proxy", "mode") != "manual":
+        return {}
+
+    http_proxy = _proxy_endpoint(
+        _gnome_setting("org.gnome.system.proxy.http", "host"),
+        _gnome_setting("org.gnome.system.proxy.http", "port"),
+    )
+    https_proxy = _proxy_endpoint(
+        _gnome_setting("org.gnome.system.proxy.https", "host"),
+        _gnome_setting("org.gnome.system.proxy.https", "port"),
+    )
+    proxies = {}
+    if http_proxy:
+        proxies["http"] = http_proxy
+    if https_proxy:
+        proxies["https"] = https_proxy
+    return proxies
+
+
+def configured_proxies():
+    """Prefer inherited proxy variables, then fall back to GNOME settings."""
+    environment = urllib.request.getproxies()
+    if any(key in environment for key in ("http", "https", "ftp", "all")):
+        return environment
+    return gnome_proxy_config()
+
+
+def open_request(request):
+    proxies = configured_proxies()
+    if proxies:
+        opener = urllib.request.build_opener(urllib.request.ProxyHandler(proxies))
+        return opener.open(request, timeout=20)
+    return urllib.request.urlopen(request, timeout=20)
+
+
 def query():
     request = urllib.request.Request(
         ENDPOINT,
@@ -82,7 +161,7 @@ def query():
         method="GET",
     )
     try:
-        with urllib.request.urlopen(request, timeout=20) as response:
+        with open_request(request) as response:
             raw = response.read()
             status = response.status
     except urllib.error.HTTPError as error:
