@@ -3,6 +3,7 @@
 一个原生 GTK 桌面小工具，用于查询 Codex 的 rate-limit reset credits。
 
 > 纯 Vibe Coding 产物。
+<img width="901" height="657" alt="image" src="https://github.com/user-attachments/assets/ad80120d-b4cd-4d9a-a8b0-7943545ea256" />
 
 ## Features
 
